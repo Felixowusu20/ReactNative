@@ -1,9 +1,14 @@
 import express from "express"
 import dotenv from "dotenv"
-import { sql } from "./config/db.js"
+import { sql } from "./src/config/db.js"
+import rateLimiting from "./src/middleware/rateLimiting.js"
+import transactionsRoute from "./src/routes/transactionsRoute.js"
 
 dotenv.config()
 const app = express()
+// middleware
+app.use(rateLimiting)
+app.use(express.json())
 const PORT = process.env.PORT ||5001
 
 async function initDB(){
@@ -20,12 +25,20 @@ async function initDB(){
     }catch(error){
         console.log("Error initializing the DB" ,error)
         process.exit(1)
-
     }
 }
-app.get("/" , (req,res) =>{
-    res.send("it is working")
+app.use("/api/transactions",transactionsRoute)
+app.get("/healthycheck" ,(req,res)=>{
+    try {
+        res.status(201).json({message:"Great  the Api is working perfectly fine"})
+        
+    } catch (error) {
+        console.log("Error getting the healthy check for the api")
+        res.status(500).json({message:"Internal server error"})
+        
+    }
 })
+
 initDB().then(()=>{
     app.listen(PORT,()=>{
     console.log("sever is running on port:",PORT)
