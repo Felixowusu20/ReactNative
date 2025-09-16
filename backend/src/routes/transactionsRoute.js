@@ -1,18 +1,27 @@
-import express from "express"
-import {createTransactions, getTransactionsByuserId,deleteTransaction, summaryOfTransactions} from "./controllers/transactionsControllers.js"
+import express from "express";
+import { 
+  createTransactions, 
+  getTransactionsByuserId, 
+  deleteTransaction, 
+  summaryOfTransactions,
+  getAllTransactions
+} from "../controllers/transactionsControllers.js";
 
-const router = express.Router()
-// endpoint for retrieving the data
-router.get("/:userId" ,getTransactionsByuserId)
-// endpoint for creating transactions
-router.post("/", createTransactions)
+const router = express.Router();
 
+// ✅ GET all transactions
+router.get("/", getAllTransactions);
 
-// enppoint for deleting item by id
-router.delete("/:userId" ,deleteTransaction)
+// ✅ GET transactions by userId
+router.get("/:userId", getTransactionsByuserId);
 
-// endpoint for getting the summary of the all the income , expenses and the balance
+// ✅ POST create a transaction
+router.post("/", createTransactions);
 
-router.get("/summary/:userId",summaryOfTransactions)
+// ✅ DELETE transaction by ID
+router.delete("/:id", deleteTransaction);
 
-export default router
+// ✅ GET summary of income, expenses, and balance by userId
+router.get("/summary/:userId", summaryOfTransactions);
+
+export default router;
